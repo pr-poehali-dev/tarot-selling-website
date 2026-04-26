@@ -3,7 +3,25 @@ import Icon from "@/components/ui/icon";
 
 const SEND_EMAIL_URL = "https://functions.poehali.dev/4ee121d4-196e-417b-9649-d11038e0448c";
 
-const MASTER_IMAGE = "https://cdn.poehali.dev/projects/d2134a9f-99c7-4d73-9478-04ddbbfbc3cc/files/dfd86eb3-1064-4f59-b220-ea619dc847a5.jpg";
+const HERO_IMAGE = "https://cdn.poehali.dev/projects/d2134a9f-99c7-4d73-9478-04ddbbfbc3cc/bucket/dee89187-1552-4324-b8f1-19469e622f8c.png";
+
+const TAROT_CARDS = [
+  { name: "Дурак", symbol: "0", meaning: "Новое начало, искренность, спонтанность. Доверьтесь потоку жизни — впереди свежий старт.", energy: "✦ Возможности" },
+  { name: "Маг", symbol: "I", meaning: "У вас есть все ресурсы для достижения цели. Действуйте — сила на вашей стороне.", energy: "⟡ Сила воли" },
+  { name: "Жрица", symbol: "II", meaning: "Слушайте интуицию. Ответ уже есть внутри вас — нужно только тишина и внимание.", energy: "◈ Интуиция" },
+  { name: "Императрица", symbol: "III", meaning: "Изобилие, плодородие, забота. Время для роста — природа на вашей стороне.", energy: "✧ Изобилие" },
+  { name: "Колесница", symbol: "VII", meaning: "Победа через дисциплину и контроль. Вы движетесь в нужном направлении.", energy: "◉ Движение" },
+  { name: "Сила", symbol: "VIII", meaning: "Внутренняя мощь важнее внешней. Мягкость и терпение победят любые обстоятельства.", energy: "✦ Внутренний огонь" },
+  { name: "Луна", symbol: "XVIII", meaning: "Иллюзии и страхи мешают ясности. Не всё то, чем кажется — доверяйте инстинктам.", energy: "⟡ Тайны" },
+  { name: "Солнце", symbol: "XIX", meaning: "Радость, успех, ясность. Этот период несёт свет и позитивную энергию — наслаждайтесь.", energy: "◈ Свет и радость" },
+  { name: "Звезда", symbol: "XVII", meaning: "Надежда после трудностей. Вы на верном пути — верьте в лучшее, вселенная слышит вас.", energy: "✧ Надежда" },
+  { name: "Мир", symbol: "XXI", meaning: "Завершение цикла, достижение, гармония. Всё сложится наилучшим образом.", energy: "◉ Завершённость" },
+  { name: "Правосудие", symbol: "XI", meaning: "Баланс и справедливость восстановятся. Поступайте честно — карма работает.", energy: "✦ Баланс" },
+  { name: "Отшельник", symbol: "IX", meaning: "Период размышлений и поиска себя. Одиночество сейчас — это мудрость, а не слабость.", energy: "⟡ Мудрость" },
+  { name: "Колесо Фортуны", symbol: "X", meaning: "Перемены неизбежны — и они к лучшему. Удача поворачивается в вашу сторону.", energy: "◈ Перемены" },
+  { name: "Влюблённые", symbol: "VI", meaning: "Гармония в отношениях или важный выбор. Следуйте сердцу, оно знает путь.", energy: "✧ Выбор сердца" },
+  { name: "Башня", symbol: "XVI", meaning: "Неожиданное разрушение — но это освобождение. После разрушения придёт что-то лучшее.", energy: "◉ Трансформация" },
+];
 
 const STARS = Array.from({ length: 80 }, (_, i) => ({
   id: i,
@@ -174,6 +192,119 @@ function GoldDivider() {
   );
 }
 
+function FreeReadingModal({ onClose }: { onClose: () => void }) {
+  const [phase, setPhase] = useState<"question" | "flipping" | "result">("question");
+  const [question, setQuestion] = useState("");
+  const [card, setCard] = useState<typeof TAROT_CARDS[0] | null>(null);
+
+  const draw = () => {
+    if (!question.trim()) return;
+    setPhase("flipping");
+    setTimeout(() => {
+      setCard(TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)]);
+      setPhase("result");
+    }, 1800);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <div
+        className="relative max-w-lg w-full animate-scale-in"
+        onClick={e => e.stopPropagation()}
+      >
+        <div
+          className="bg-mystic-deep border border-gold-DEFAULT/50 p-8"
+          style={{ boxShadow: "0 0 80px rgba(102,51,153,0.5)" }}
+        >
+          <div className="text-center mb-6">
+            <p className="font-montserrat text-gold-DEFAULT/60 text-xs tracking-[0.4em] uppercase mb-2">KeyArcana</p>
+            <h2 className="font-cormorant text-3xl text-white font-light">Бесплатный расклад</h2>
+          </div>
+
+          {phase === "question" && (
+            <div className="space-y-5">
+              <p className="font-cormorant text-lg text-white/60 italic text-center">
+                Задайте один вопрос — и карта откроет ответ
+              </p>
+              <textarea
+                autoFocus
+                rows={3}
+                value={question}
+                onChange={e => setQuestion(e.target.value)}
+                placeholder="Ваш вопрос..."
+                className="w-full bg-mystic-mid/60 border border-gold-DEFAULT/30 px-5 py-3 font-montserrat text-sm text-white placeholder-white/30 focus:outline-none focus:border-gold-DEFAULT/60 transition-colors resize-none"
+              />
+              <button
+                onClick={draw}
+                disabled={!question.trim()}
+                className="w-full py-4 font-montserrat text-xs tracking-widest uppercase font-medium disabled:opacity-40 transition-all duration-300 hover:scale-[1.02]"
+                style={{ background: "linear-gradient(135deg, #FFE066, #FFCC33)", color: "#0d0515" }}
+              >
+                Вытянуть карту
+              </button>
+            </div>
+          )}
+
+          {phase === "flipping" && (
+            <div className="flex flex-col items-center py-8 gap-6">
+              <div
+                className="w-28 h-44 border-2 border-gold-DEFAULT/60 flex items-center justify-center"
+                style={{
+                  background: "linear-gradient(135deg, #2a1850, #663399)",
+                  boxShadow: "0 0 40px rgba(102,51,153,0.6)",
+                  animation: "spin-slow 1.8s linear",
+                }}
+              >
+                <span className="text-gold-DEFAULT text-4xl animate-pulse">✦</span>
+              </div>
+              <p className="font-cormorant text-xl text-gold-DEFAULT/70 italic animate-pulse">Карта открывается...</p>
+            </div>
+          )}
+
+          {phase === "result" && card && (
+            <div className="space-y-6">
+              <p className="font-cormorant text-white/50 italic text-center text-sm">«{question}»</p>
+              <div className="flex flex-col items-center gap-4">
+                <div
+                  className="w-28 h-44 border-2 border-gold-DEFAULT flex flex-col items-center justify-center gap-2 animate-scale-in"
+                  style={{
+                    background: "linear-gradient(160deg, #2a1850 0%, #663399 50%, #1e1238 100%)",
+                    boxShadow: "0 0 50px rgba(255,204,51,0.25), 0 0 20px rgba(102,51,153,0.5)",
+                  }}
+                >
+                  <span className="font-cormorant text-gold-DEFAULT text-xs tracking-widest">{card.symbol}</span>
+                  <span className="text-gold-DEFAULT text-2xl">✦</span>
+                  <span className="font-cormorant text-white text-sm text-center px-2">{card.name}</span>
+                </div>
+                <p className="font-montserrat text-gold-DEFAULT/70 text-xs tracking-widest">{card.energy}</p>
+              </div>
+              <div className="border border-gold-DEFAULT/20 p-5" style={{ background: "rgba(102,51,153,0.1)" }}>
+                <p className="font-cormorant text-lg text-white/85 italic leading-relaxed text-center">
+                  {card.meaning}
+                </p>
+              </div>
+              <button
+                onClick={onClose}
+                className="w-full py-3 font-montserrat text-xs tracking-widest uppercase border border-gold-DEFAULT/30 text-gold-light hover:bg-gold-DEFAULT/10 transition-all"
+              >
+                Хочу подробнее — записаться к мастеру
+              </button>
+            </div>
+          )}
+        </div>
+
+        <button
+          onClick={onClose}
+          className="absolute -top-4 -right-4 w-9 h-9 rounded-full bg-mystic-mid border border-gold-DEFAULT/40 flex items-center justify-center text-gold-light hover:text-gold-DEFAULT transition-colors"
+        >
+          <Icon name="X" size={16} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function CertificateModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -241,6 +372,7 @@ function CertificateModal({ onClose }: { onClose: () => void }) {
 
 const Index = () => {
   const [showCert, setShowCert] = useState(false);
+  const [showFreeReading, setShowFreeReading] = useState(false);
   const [activeNav, setActiveNav] = useState("hero");
   const [visible, setVisible] = useState<Record<string, boolean>>({});
   const [form, setForm] = useState({ name: "", contact: "", message: "Бесплатный расклад" });
@@ -332,11 +464,20 @@ const Index = () => {
       <section
         id="hero"
         ref={setRef("hero")}
-        className="relative min-h-screen flex flex-col items-center justify-center text-center px-6"
-        style={{
-          background: "radial-gradient(ellipse at 50% 60%, rgba(102,51,153,0.30) 0%, rgba(13,5,21,0) 70%)",
-        }}
+        className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden"
       >
+        {/* Фоновая картинка */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={HERO_IMAGE}
+            alt=""
+            className="w-full h-full object-cover object-center"
+            style={{ opacity: 0.35 }}
+          />
+          <div className="absolute inset-0" style={{
+            background: "linear-gradient(to bottom, rgba(13,5,21,0.6) 0%, rgba(13,5,21,0.2) 40%, rgba(13,5,21,0.5) 70%, rgba(13,5,21,1) 100%)"
+          }} />
+        </div>
         <div className="relative z-10 max-w-3xl mx-auto">
           <p
             className="font-montserrat text-gold-DEFAULT/70 text-xs tracking-[0.5em] uppercase mb-8 animate-fade-in"
@@ -407,9 +548,9 @@ const Index = () => {
       </section>
 
       {/* SERVICES */}
-      <section id="services" ref={setRef("services")} className="py-28 px-6">
+      <section id="services" ref={setRef("services")} className="py-14 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className={`text-center mb-16 transition-all duration-800 ${visible.services ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <div className={`text-center mb-10 transition-all duration-800 ${visible.services ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <p className="font-montserrat text-gold-DEFAULT/70 text-xs tracking-[0.4em] uppercase mb-4">Что я предлагаю</p>
             <h2 className="font-cormorant text-5xl md:text-6xl font-light">Услуги и расклады</h2>
           </div>
@@ -459,11 +600,11 @@ const Index = () => {
                 </div>
                 {"free" in service && service.free ? (
                   <button
-                    onClick={() => { setForm(f => ({ ...f, message: "Бесплатный расклад" })); scrollTo("contacts"); }}
-                    className="mt-4 w-full py-2 font-montserrat text-xs tracking-widest uppercase font-medium transition-all duration-300"
+                    onClick={() => setShowFreeReading(true)}
+                    className="mt-4 w-full py-2 font-montserrat text-xs tracking-widest uppercase font-medium transition-all duration-300 hover:scale-[1.02]"
                     style={{ background: "linear-gradient(135deg, #FFE066, #FFCC33)", color: "#0d0515" }}
                   >
-                    Получить бесплатно →
+                    Вытянуть карту →
                   </button>
                 ) : (
                   <button
@@ -483,13 +624,13 @@ const Index = () => {
       <section
         id="reviews"
         ref={setRef("reviews")}
-        className="py-28 px-6"
+        className="py-14 px-6"
         style={{ background: "linear-gradient(to bottom, transparent, rgba(17,14,30,0.6), transparent)" }}
       >
         <div className="max-w-6xl mx-auto">
-          <div className={`text-center mb-16 transition-all duration-800 ${visible.reviews ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <div className={`text-center mb-10 transition-all duration-800 ${visible.reviews ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <p className="font-montserrat text-gold-DEFAULT/70 text-xs tracking-[0.4em] uppercase mb-4">Голоса клиентов</p>
-            <h2 className="font-cormorant text-5xl md:text-6xl font-light mb-6">Отзывы и результаты</h2>
+            <h2 className="font-cormorant text-5xl md:text-6xl font-light mb-4">Отзывы и результаты</h2>
             <div className="inline-flex items-center gap-2 border border-gold-DEFAULT/30 bg-mystic-mid/40 px-5 py-2 rounded-sm">
               <Icon name="Lock" size={13} className="text-gold-DEFAULT" />
               <p className="font-montserrat text-xs text-white/60 tracking-widest">Все отзывы публикуются анонимно — имена не раскрываются</p>
@@ -532,12 +673,12 @@ const Index = () => {
       </section>
 
       {/* CONTACTS */}
-      <section id="contacts" ref={setRef("contacts")} className="py-28 px-6">
+      <section id="contacts" ref={setRef("contacts")} className="py-14 px-6">
         <div className="max-w-2xl mx-auto text-center">
           <div className={`transition-all duration-800 ${visible.contacts ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <p className="font-montserrat text-gold-DEFAULT/70 text-xs tracking-[0.4em] uppercase mb-4">Начните путь</p>
             <h2 className="font-cormorant text-5xl md:text-6xl font-light mb-6">Связаться со мной</h2>
-            <p className="font-cormorant italic text-white/50 text-xl mb-12">
+            <p className="font-cormorant italic text-white/50 text-xl mb-8">
               Напишите — и мы найдём время для вашей консультации
             </p>
 
@@ -616,6 +757,7 @@ const Index = () => {
       </footer>
 
       {showCert && <CertificateModal onClose={() => setShowCert(false)} />}
+      {showFreeReading && <FreeReadingModal onClose={() => setShowFreeReading(false)} />}
     </div>
   );
 };
