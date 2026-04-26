@@ -58,15 +58,16 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				gold: {
-					light: '#f0d080',
-					DEFAULT: '#c9a84c',
-					dark: '#8a6a1f',
+					light: '#FFE066',
+					DEFAULT: '#FFCC33',
+					dark: '#cc9900',
 				},
 				mystic: {
-					dark: '#0a0612',
-					deep: '#110e1e',
-					mid: '#1a1530',
-					light: '#261f42',
+					dark: '#0d0515',
+					deep: '#160b24',
+					mid: '#221038',
+					light: '#2e1550',
+					purple: '#663399',
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',

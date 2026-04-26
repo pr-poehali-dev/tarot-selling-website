@@ -13,14 +13,54 @@ const STARS = Array.from({ length: 80 }, (_, i) => ({
 }));
 
 const SERVICES = [
-  { icon: "✦", title: "Расклад на год", desc: "Полная карта вашего года — события, возможности и испытания по каждому месяцу", price: "от 3 500 ₽" },
-  { icon: "◈", title: "Расклад на отношения", desc: "Глубинный анализ пары, совместимость, скрытые динамики и перспективы", price: "от 2 500 ₽" },
-  { icon: "⟡", title: "Расклад на ситуацию", desc: "Ответ на конкретный вопрос — работа, деньги, решения, выборы пути", price: "от 1 500 ₽" },
-  { icon: "◉", title: "Астрологическая карта", desc: "Натальная карта с интерпретацией и прогнозом на текущий период", price: "от 5 000 ₽" },
-  { icon: "✧", title: "Программа судьбы", desc: "Нумерологический анализ личности, миссии, кармических задач", price: "от 4 000 ₽" },
-  { icon: "⬡", title: "Коучинг-сессия", desc: "Разбор жизненной ситуации с инструментами таро и психологии", price: "от 3 000 ₽" },
-  { icon: "🎴", title: "Бесплатный расклад", desc: "Один вопрос — одна карта. Краткий ответ на то, что волнует прямо сейчас. Без регистрации, анонимно.", price: "Бесплатно" },
-  { icon: "🌙", title: "Расклад на месяц", desc: "Энергетический прогноз на ближайшие 30 дней — события, настроение, ключевые моменты", price: "от 1 200 ₽" },
+  {
+    icon: "🎴",
+    title: "Да/Нет",
+    desc: "Один чёткий ответ на ваш вопрос — без лишних слов. Быстро, точно, анонимно.",
+    oldPrice: "500 ₽",
+    price: "199 ₽",
+    highlight: false,
+  },
+  {
+    icon: "💞",
+    title: "Чувства партнёра",
+    desc: "Что он думает, чувствует и какие намерения скрывает. Полная картина отношений.",
+    oldPrice: "990 ₽",
+    price: "790 ₽",
+    highlight: false,
+  },
+  {
+    icon: "✦",
+    title: "Кельтский крест",
+    desc: "Классический расклад из 10 карт — глубокий анализ ситуации, прошлое, настоящее и будущее.",
+    oldPrice: null,
+    price: "1 590 ₽",
+    highlight: false,
+  },
+  {
+    icon: "◈",
+    title: "Расклад на год",
+    desc: "Полная карта вашего года — события, возможности и испытания по каждому месяцу.",
+    oldPrice: null,
+    price: "2 390 ₽",
+    highlight: false,
+  },
+  {
+    icon: "👑",
+    title: "VIP-диагностика",
+    desc: "Расширенная консультация: таро + нумерология + астрология. Полный разбор жизненной ситуации.",
+    oldPrice: "7 500 ₽",
+    price: "6 990 ₽",
+    highlight: true,
+  },
+  {
+    icon: "📜",
+    title: "PDF-сертификат",
+    desc: "Именной сертификат на расклад — красиво оформленный документ, который можно подарить.",
+    oldPrice: "699 ₽",
+    price: "Бесплатно при заказе",
+    highlight: false,
+  },
 ];
 
 const REVIEWS = [
@@ -64,6 +104,31 @@ const REVIEWS = [
     text: "Программа судьбы — это отдельное открытие. Никогда не думала, что нумерология может быть настолько точной. Очень благодарна за работу.",
     stars: 5,
   },
+  {
+    label: "Клиентка из Ростова-на-Дону",
+    text: "Просто спасибо. Расклад «Да/Нет» дал мне тот самый толчок, которого не хватало. Кратко, чётко, без воды — именно то, что нужно.",
+    stars: 5,
+  },
+  {
+    label: "Клиент из Самары",
+    text: "Заказал VIP-диагностику перед важным решением. Разбор был настолько глубоким, что я несколько раз перечитывал. Всё сошлось.",
+    stars: 5,
+  },
+  {
+    label: "Клиентка из Воронежа",
+    text: "Чувства партнёра — самый точный расклад, что я встречала. Описание было как будто она знала его лично. Поразительно.",
+    stars: 5,
+  },
+  {
+    label: "Клиент из Перми",
+    text: "Кельтский крест — это мощно. Давно интересовался таро, но впервые увидел такой детальный и осознанный подход. Буду возвращаться.",
+    stars: 5,
+  },
+  {
+    label: "Клиентка из Омска",
+    text: "Обратилась по поводу переезда — стоит ли рисковать. Расклад показал всё по шагам. Решилась. Ни разу не пожалела.",
+    stars: 5,
+  },
 ];
 
 function StarField() {
@@ -72,13 +137,14 @@ function StarField() {
       {STARS.map((star) => (
         <div
           key={star.id}
-          className="absolute rounded-full bg-gold-light"
+          className="absolute rounded-full"
           style={{
             left: `${star.x}%`,
             top: `${star.y}%`,
             width: `${star.size}px`,
             height: `${star.size}px`,
-            opacity: 0.6,
+            opacity: 0.5,
+            background: star.id % 3 === 0 ? "#663399" : "#FFCC33",
             animation: `twinkle ${star.duration}s ease-in-out ${star.delay}s infinite`,
           }}
         />
@@ -107,7 +173,7 @@ function CertificateModal({ onClose }: { onClose: () => void }) {
       >
         <div
           className="relative bg-mystic-deep border border-gold-DEFAULT/60 p-1 rounded-sm"
-          style={{ boxShadow: "0 0 60px rgba(201,168,76,0.3), 0 0 120px rgba(201,168,76,0.1)" }}
+          style={{ boxShadow: "0 0 60px rgba(102,51,153,0.4), 0 0 120px rgba(255,204,51,0.1)" }}
         >
           <div className="border border-gold-DEFAULT/30 p-8 rounded-sm">
             <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-gold-DEFAULT/60" />
@@ -193,12 +259,12 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-mystic-dark text-white font-montserrat overflow-x-hidden">
+    <div className="min-h-screen text-white font-montserrat overflow-x-hidden" style={{ background: "#0d0515" }}>
       <StarField />
 
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4"
-        style={{ background: "linear-gradient(to bottom, rgba(10,6,18,0.95) 0%, transparent 100%)" }}>
+        style={{ background: "linear-gradient(to bottom, rgba(13,5,21,0.97) 0%, transparent 100%)" }}>
         <div className="font-cormorant text-gold-DEFAULT text-2xl tracking-widest cursor-pointer" onClick={() => scrollTo("hero")}>
           ✦ KeyArcana
         </div>
@@ -235,7 +301,7 @@ const Index = () => {
         ref={setRef("hero")}
         className="relative min-h-screen flex flex-col items-center justify-center text-center px-6"
         style={{
-          background: "radial-gradient(ellipse at 50% 60%, rgba(90,50,150,0.25) 0%, rgba(10,6,18,0) 70%)",
+          background: "radial-gradient(ellipse at 50% 60%, rgba(102,51,153,0.30) 0%, rgba(13,5,21,0) 70%)",
         }}
       >
         <div className="relative z-10 max-w-3xl mx-auto">
@@ -277,8 +343,8 @@ const Index = () => {
               onClick={() => scrollTo("contacts")}
               className="px-10 py-4 font-montserrat text-xs tracking-[0.3em] uppercase text-mystic-dark font-medium transition-all duration-300 hover:scale-105"
               style={{
-                background: "linear-gradient(135deg, #f0d080, #c9a84c)",
-                boxShadow: "0 0 30px rgba(201,168,76,0.4)",
+                background: "linear-gradient(135deg, #FFE066, #FFCC33)",
+                boxShadow: "0 0 30px rgba(255,204,51,0.4)",
               }}
             >
               Записаться на сеанс
@@ -300,9 +366,10 @@ const Index = () => {
         </div>
 
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-20 left-10 text-6xl text-gold-DEFAULT/5 animate-spin-slow">✦</div>
-          <div className="absolute bottom-32 right-16 text-4xl text-gold-DEFAULT/8 animate-spin-slow" style={{ animationDirection: "reverse" }}>◈</div>
-          <div className="absolute top-1/3 right-8 text-2xl text-gold-DEFAULT/6 animate-float">⟡</div>
+          <div className="absolute top-20 left-10 text-7xl animate-spin-slow" style={{ color: "rgba(102,51,153,0.18)" }}>✦</div>
+          <div className="absolute bottom-32 right-16 text-5xl animate-spin-slow" style={{ animationDirection: "reverse", color: "rgba(255,204,51,0.1)" }}>◈</div>
+          <div className="absolute top-1/3 right-8 text-3xl animate-float" style={{ color: "rgba(102,51,153,0.12)" }}>⟡</div>
+          <div className="absolute bottom-20 left-20 text-2xl animate-float" style={{ animationDelay: "2s", color: "rgba(255,204,51,0.08)" }}>✧</div>
         </div>
       </section>
 
@@ -311,7 +378,7 @@ const Index = () => {
         id="about"
         ref={setRef("about")}
         className="relative py-28 px-6"
-        style={{ background: "linear-gradient(to bottom, transparent, rgba(17,14,30,0.8), transparent)" }}
+        style={{ background: "linear-gradient(to bottom, transparent, rgba(22,11,36,0.8), transparent)" }}
       >
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -321,13 +388,13 @@ const Index = () => {
               <div className="relative">
                 <div
                   className="absolute -inset-4 rounded-sm opacity-40"
-                  style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.3), transparent)" }}
+                  style={{ background: "linear-gradient(135deg, rgba(102,51,153,0.4), transparent)" }}
                 />
                 <img
                   src={MASTER_IMAGE}
                   alt="Мастер таро"
                   className="relative w-full aspect-[3/4] object-cover rounded-sm"
-                  style={{ boxShadow: "0 0 60px rgba(201,168,76,0.2)" }}
+                  style={{ boxShadow: "0 0 60px rgba(102,51,153,0.35)" }}
                 />
                 <div
                   className="absolute bottom-6 right-6 bg-mystic-deep/90 border border-gold-DEFAULT/40 px-5 py-3 cursor-pointer hover:bg-gold-DEFAULT/10 transition-all"
@@ -392,29 +459,45 @@ const Index = () => {
             {SERVICES.map((service, i) => (
               <div
                 key={service.title}
-                className={`group relative border border-gold-DEFAULT/20 p-8 hover:border-gold-DEFAULT/50 transition-all duration-500 cursor-pointer ${
-                  visible.services ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-                }`}
+                className={`group relative border p-8 transition-all duration-500 cursor-pointer ${
+                  service.highlight
+                    ? "border-gold-DEFAULT/60"
+                    : "border-gold-DEFAULT/20 hover:border-gold-DEFAULT/50"
+                } ${visible.services ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}
                 style={{
                   transitionDelay: `${i * 100}ms`,
-                  background: "linear-gradient(135deg, rgba(26,21,48,0.8), rgba(17,14,30,0.9))",
+                  background: service.highlight
+                    ? "linear-gradient(135deg, rgba(102,51,153,0.35), rgba(22,11,36,0.95))"
+                    : "linear-gradient(135deg, rgba(34,16,56,0.8), rgba(22,11,36,0.9))",
+                  boxShadow: service.highlight ? "0 0 40px rgba(102,51,153,0.3)" : undefined,
                 }}
               >
+                {service.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 font-montserrat text-[10px] tracking-widest uppercase text-mystic-dark font-semibold"
+                    style={{ background: "linear-gradient(90deg, #FFCC33, #FFE066)" }}>
+                    Популярно
+                  </div>
+                )}
                 <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%)" }}
+                  style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(255,204,51,0.06) 0%, transparent 70%)" }}
                 />
-                <div className="text-3xl text-gold-DEFAULT mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
                   {service.icon}
                 </div>
                 <h3 className="font-cormorant text-2xl font-light text-white mb-3">{service.title}</h3>
                 <p className="font-montserrat text-white/50 text-sm leading-relaxed mb-6">{service.desc}</p>
-                <p
-                  className="font-cormorant text-xl text-gold-DEFAULT"
-                  style={{ borderTop: "1px solid rgba(201,168,76,0.2)", paddingTop: "1rem" }}
-                >
-                  {service.price}
-                </p>
+                <div style={{ borderTop: "1px solid rgba(255,204,51,0.2)", paddingTop: "1rem" }} className="flex items-baseline gap-3 flex-wrap">
+                  {service.oldPrice && (
+                    <span className="font-montserrat text-sm text-white/30 line-through">{service.oldPrice}</span>
+                  )}
+                  <span
+                    className="font-cormorant text-2xl font-semibold"
+                    style={{ color: service.highlight ? "#FFCC33" : "#FFE066" }}
+                  >
+                    {service.price}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
@@ -502,8 +585,8 @@ const Index = () => {
               <button
                 className="w-full py-5 font-montserrat text-xs tracking-[0.3em] uppercase text-mystic-dark font-medium transition-all duration-300 hover:scale-[1.02]"
                 style={{
-                  background: "linear-gradient(135deg, #f0d080, #c9a84c)",
-                  boxShadow: "0 0 40px rgba(201,168,76,0.3)",
+                  background: "linear-gradient(135deg, #FFE066, #FFCC33)",
+                  boxShadow: "0 0 40px rgba(255,204,51,0.3)",
                 }}
               >
                 Отправить сообщение
