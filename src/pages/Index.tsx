@@ -19,31 +19,49 @@ const SERVICES = [
   { icon: "◉", title: "Астрологическая карта", desc: "Натальная карта с интерпретацией и прогнозом на текущий период", price: "от 5 000 ₽" },
   { icon: "✧", title: "Программа судьбы", desc: "Нумерологический анализ личности, миссии, кармических задач", price: "от 4 000 ₽" },
   { icon: "⬡", title: "Коучинг-сессия", desc: "Разбор жизненной ситуации с инструментами таро и психологии", price: "от 3 000 ₽" },
+  { icon: "🎴", title: "Бесплатный расклад", desc: "Один вопрос — одна карта. Краткий ответ на то, что волнует прямо сейчас. Без регистрации, анонимно.", price: "Бесплатно" },
+  { icon: "🌙", title: "Расклад на месяц", desc: "Энергетический прогноз на ближайшие 30 дней — события, настроение, ключевые моменты", price: "от 1 200 ₽" },
 ];
 
 const REVIEWS = [
   {
-    name: "Анастасия К.",
-    city: "Москва",
+    label: "Клиент из Москвы",
     text: "Расклад на год оказался удивительно точным. Мастер увидела ситуацию на работе, о которой я не говорила — это поразило меня. Обязательно вернусь.",
     stars: 5,
   },
   {
-    name: "Марина В.",
-    city: "Санкт-Петербург",
+    label: "Клиентка из Санкт-Петербурга",
     text: "Обратилась в сложный период в отношениях. Расклад дал мне ясность и спокойствие. Спасибо за чуткость и профессионализм.",
     stars: 5,
   },
   {
-    name: "Елена Т.",
-    city: "Екатеринбург",
+    label: "Клиентка из Екатеринбурга",
     text: "Была скептиком, теперь — нет. Прошло три месяца, и половина предсказанного уже сбылась. Очень благодарна за работу.",
     stars: 5,
   },
   {
-    name: "Дарья М.",
-    city: "Казань",
+    label: "Клиентка из Казани",
     text: "Астрологическая карта перевернула моё понимание себя. Впервые всё встало на свои места. Рекомендую всем, кто ищет ответы.",
+    stars: 5,
+  },
+  {
+    label: "Клиент из Новосибирска",
+    text: "Долго сомневался, стоит ли обращаться. В итоге — ни капли сожаления. Расклад на ситуацию с бизнесом дал чёткий взгляд со стороны. Решение принял уверенно.",
+    stars: 5,
+  },
+  {
+    label: "Клиентка из Краснодара",
+    text: "Очень тонко и без лишних слов. Ощущение, что меня видят насквозь — в хорошем смысле. Расклад на отношения всё расставил по местам.",
+    stars: 5,
+  },
+  {
+    label: "Клиент из Тюмени",
+    text: "Пришёл с запросом по карьере. Получил не просто ответы, а целое понимание ситуации. Через месяц всё сложилось именно так, как было описано.",
+    stars: 5,
+  },
+  {
+    label: "Клиентка из Уфы",
+    text: "Программа судьбы — это отдельное открытие. Никогда не думала, что нумерология может быть настолько точной. Очень благодарна за работу.",
     stars: 5,
   },
 ];
@@ -182,7 +200,7 @@ const Index = () => {
       <nav className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4"
         style={{ background: "linear-gradient(to bottom, rgba(10,6,18,0.95) 0%, transparent 100%)" }}>
         <div className="font-cormorant text-gold-DEFAULT text-2xl tracking-widest cursor-pointer" onClick={() => scrollTo("hero")}>
-          ✦ Таро
+          ✦ KeyArcana
         </div>
         <div className="hidden md:flex items-center gap-8">
           {[
@@ -413,7 +431,11 @@ const Index = () => {
         <div className="max-w-6xl mx-auto">
           <div className={`text-center mb-16 transition-all duration-800 ${visible.reviews ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <p className="font-montserrat text-gold-DEFAULT/70 text-xs tracking-[0.4em] uppercase mb-4">Голоса клиентов</p>
-            <h2 className="font-cormorant text-5xl md:text-6xl font-light">Отзывы и результаты</h2>
+            <h2 className="font-cormorant text-5xl md:text-6xl font-light mb-6">Отзывы и результаты</h2>
+            <div className="inline-flex items-center gap-2 border border-gold-DEFAULT/30 bg-mystic-mid/40 px-5 py-2 rounded-sm">
+              <Icon name="Lock" size={13} className="text-gold-DEFAULT" />
+              <p className="font-montserrat text-xs text-white/60 tracking-widest">Все отзывы публикуются анонимно — имена не раскрываются</p>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -439,8 +461,10 @@ const Index = () => {
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-px bg-gold-DEFAULT/40" />
                   <div>
-                    <p className="font-montserrat text-sm text-gold-light font-medium">{review.name}</p>
-                    <p className="font-montserrat text-xs text-white/40">{review.city}</p>
+                    <p className="font-montserrat text-sm text-gold-light font-medium">{review.label}</p>
+                    <p className="font-montserrat text-xs text-white/40 flex items-center gap-1">
+                      <Icon name="Lock" size={10} /> анонимно
+                    </p>
                   </div>
                 </div>
               </div>
@@ -490,11 +514,10 @@ const Index = () => {
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               {[
-                { icon: "Send", label: "Telegram", value: "@taro_elena" },
-                { icon: "Phone", label: "Телефон", value: "+7 (999) 123-45-67" },
-                { icon: "Instagram", label: "Instagram", value: "@elena.taro" },
+                { icon: "Send", label: "Telegram", value: "@keyarcana", href: "https://t.me/keyarcana" },
+                { icon: "Users", label: "ВКонтакте", value: "KeyArcana", href: "https://vk.com/club237877156" },
               ].map((contact) => (
-                <div key={contact.label} className="flex items-center gap-3 text-left group cursor-pointer">
+                <a key={contact.label} href={contact.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-left group cursor-pointer">
                   <div className="w-10 h-10 border border-gold-DEFAULT/30 flex items-center justify-center group-hover:border-gold-DEFAULT/60 transition-colors">
                     <Icon name={contact.icon} size={16} className="text-gold-DEFAULT" />
                   </div>
@@ -502,7 +525,7 @@ const Index = () => {
                     <p className="font-montserrat text-xs text-white/40">{contact.label}</p>
                     <p className="font-montserrat text-sm text-gold-light group-hover:text-gold-DEFAULT transition-colors">{contact.value}</p>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </div>
@@ -511,8 +534,8 @@ const Index = () => {
 
       {/* FOOTER */}
       <footer className="py-10 px-6 border-t border-gold-DEFAULT/10 text-center">
-        <p className="font-cormorant text-gold-DEFAULT/40 text-lg mb-2">✦ Таро — Путь к истине ✦</p>
-        <p className="font-montserrat text-white/20 text-xs">© 2024 Елена Светлова. Все права защищены.</p>
+        <p className="font-cormorant text-gold-DEFAULT/40 text-lg mb-2">✦ KeyArcana ✦</p>
+        <p className="font-montserrat text-white/20 text-xs">© 2024 KeyArcana. Все права защищены.</p>
       </footer>
 
       {showCert && <CertificateModal onClose={() => setShowCert(false)} />}
