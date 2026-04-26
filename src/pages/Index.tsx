@@ -5,24 +5,6 @@ const SEND_EMAIL_URL = "https://functions.poehali.dev/4ee121d4-196e-417b-9649-d1
 
 const HERO_IMAGE = "https://cdn.poehali.dev/projects/d2134a9f-99c7-4d73-9478-04ddbbfbc3cc/bucket/dee89187-1552-4324-b8f1-19469e622f8c.png";
 
-const TAROT_CARDS = [
-  { name: "Дурак", symbol: "0", meaning: "Новое начало, искренность, спонтанность. Доверьтесь потоку жизни — впереди свежий старт.", energy: "✦ Возможности" },
-  { name: "Маг", symbol: "I", meaning: "У вас есть все ресурсы для достижения цели. Действуйте — сила на вашей стороне.", energy: "⟡ Сила воли" },
-  { name: "Жрица", symbol: "II", meaning: "Слушайте интуицию. Ответ уже есть внутри вас — нужно только тишина и внимание.", energy: "◈ Интуиция" },
-  { name: "Императрица", symbol: "III", meaning: "Изобилие, плодородие, забота. Время для роста — природа на вашей стороне.", energy: "✧ Изобилие" },
-  { name: "Колесница", symbol: "VII", meaning: "Победа через дисциплину и контроль. Вы движетесь в нужном направлении.", energy: "◉ Движение" },
-  { name: "Сила", symbol: "VIII", meaning: "Внутренняя мощь важнее внешней. Мягкость и терпение победят любые обстоятельства.", energy: "✦ Внутренний огонь" },
-  { name: "Луна", symbol: "XVIII", meaning: "Иллюзии и страхи мешают ясности. Не всё то, чем кажется — доверяйте инстинктам.", energy: "⟡ Тайны" },
-  { name: "Солнце", symbol: "XIX", meaning: "Радость, успех, ясность. Этот период несёт свет и позитивную энергию — наслаждайтесь.", energy: "◈ Свет и радость" },
-  { name: "Звезда", symbol: "XVII", meaning: "Надежда после трудностей. Вы на верном пути — верьте в лучшее, вселенная слышит вас.", energy: "✧ Надежда" },
-  { name: "Мир", symbol: "XXI", meaning: "Завершение цикла, достижение, гармония. Всё сложится наилучшим образом.", energy: "◉ Завершённость" },
-  { name: "Правосудие", symbol: "XI", meaning: "Баланс и справедливость восстановятся. Поступайте честно — карма работает.", energy: "✦ Баланс" },
-  { name: "Отшельник", symbol: "IX", meaning: "Период размышлений и поиска себя. Одиночество сейчас — это мудрость, а не слабость.", energy: "⟡ Мудрость" },
-  { name: "Колесо Фортуны", symbol: "X", meaning: "Перемены неизбежны — и они к лучшему. Удача поворачивается в вашу сторону.", energy: "◈ Перемены" },
-  { name: "Влюблённые", symbol: "VI", meaning: "Гармония в отношениях или важный выбор. Следуйте сердцу, оно знает путь.", energy: "✧ Выбор сердца" },
-  { name: "Башня", symbol: "XVI", meaning: "Неожиданное разрушение — но это освобождение. После разрушения придёт что-то лучшее.", energy: "◉ Трансформация" },
-];
-
 const STARS = Array.from({ length: 80 }, (_, i) => ({
   id: i,
   x: Math.random() * 100,
@@ -34,12 +16,21 @@ const STARS = Array.from({ length: 80 }, (_, i) => ({
 
 const SERVICES = [
   {
+    icon: "🎁",
+    title: "Бесплатный расклад",
+    desc: "Один вопрос — одна карта. Краткий ответ прямо сейчас. Без регистрации, анонимно.",
+    oldPrice: null,
+    price: "Бесплатно",
+    highlight: false,
+    free: true,
+  },
+  {
     icon: "🎴",
     title: "Да/Нет",
     desc: "Один чёткий ответ на ваш вопрос — без лишних слов. Быстро, точно, анонимно.",
     oldPrice: "500 ₽",
     price: "199 ₽",
-    highlight: false,
+    highlight: true,
   },
   {
     icon: "💞",
@@ -71,7 +62,7 @@ const SERVICES = [
     desc: "Расширенная консультация: таро + нумерология + астрология. Полный разбор жизненной ситуации.",
     oldPrice: "7 500 ₽",
     price: "6 990 ₽",
-    highlight: true,
+    highlight: false,
   },
   {
     icon: "📜",
@@ -80,15 +71,6 @@ const SERVICES = [
     oldPrice: null,
     price: "199 ₽",
     highlight: false,
-  },
-  {
-    icon: "🎁",
-    title: "Бесплатный расклад",
-    desc: "Один вопрос — одна карта. Краткий ответ на то, что волнует прямо сейчас. Без регистрации, анонимно.",
-    oldPrice: null,
-    price: "Бесплатно",
-    highlight: false,
-    free: true,
   },
 ];
 
@@ -192,18 +174,29 @@ function GoldDivider() {
   );
 }
 
-function FreeReadingModal({ onClose }: { onClose: () => void }) {
-  const [phase, setPhase] = useState<"question" | "flipping" | "result">("question");
-  const [question, setQuestion] = useState("");
-  const [card, setCard] = useState<typeof TAROT_CARDS[0] | null>(null);
+const TAROT_API = "https://functions.poehali.dev/c5886d42-66ab-42ba-ae7e-3c931659899b";
 
-  const draw = () => {
+function FreeReadingModal({ onClose }: { onClose: () => void }) {
+  const [phase, setPhase] = useState<"question" | "flipping" | "result" | "error">("question");
+  const [question, setQuestion] = useState("");
+  const [card, setCard] = useState<{ name: string; symbol: string; energy: string; meaning: string } | null>(null);
+
+  const draw = async () => {
     if (!question.trim()) return;
     setPhase("flipping");
-    setTimeout(() => {
-      setCard(TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)]);
+    try {
+      const res = await fetch(TAROT_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+      const data = await res.json();
+      const parsed = typeof data === "string" ? JSON.parse(data) : data;
+      setCard(parsed.card);
       setPhase("result");
-    }, 1800);
+    } catch {
+      setPhase("error");
+    }
   };
 
   return (
@@ -253,12 +246,24 @@ function FreeReadingModal({ onClose }: { onClose: () => void }) {
                 style={{
                   background: "linear-gradient(135deg, #2a1850, #663399)",
                   boxShadow: "0 0 40px rgba(102,51,153,0.6)",
-                  animation: "spin-slow 1.8s linear",
                 }}
               >
                 <span className="text-gold-DEFAULT text-4xl animate-pulse">✦</span>
               </div>
               <p className="font-cormorant text-xl text-gold-DEFAULT/70 italic animate-pulse">Карта открывается...</p>
+            </div>
+          )}
+
+          {phase === "error" && (
+            <div className="text-center py-8 space-y-4">
+              <p className="font-cormorant text-xl text-white/60 italic">Звёзды не ответили...</p>
+              <p className="font-montserrat text-sm text-white/40">Попробуйте ещё раз или задайте другой вопрос.</p>
+              <button
+                onClick={() => setPhase("question")}
+                className="px-8 py-3 font-montserrat text-xs tracking-widest uppercase border border-gold-DEFAULT/30 text-gold-light hover:bg-gold-DEFAULT/10 transition-all"
+              >
+                Попробовать снова
+              </button>
             </div>
           )}
 

@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS preflight",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Question returns card",
+      "method": "POST",
+      "path": "/",
+      "body": {"question": "What does the future hold?"},
+      "expectedStatus": 200
+    }
+  ]
+}
