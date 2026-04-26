@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import Icon from "@/components/ui/icon";
 
+const SEND_EMAIL_URL = "https://functions.poehali.dev/4ee121d4-196e-417b-9649-d11038e0448c";
+
 const MASTER_IMAGE = "https://cdn.poehali.dev/projects/d2134a9f-99c7-4d73-9478-04ddbbfbc3cc/files/dfd86eb3-1064-4f59-b220-ea619dc847a5.jpg";
 
 const STARS = Array.from({ length: 80 }, (_, i) => ({
@@ -57,9 +59,18 @@ const SERVICES = [
     icon: "📜",
     title: "PDF-сертификат",
     desc: "Именной сертификат на расклад — красиво оформленный документ, который можно подарить.",
-    oldPrice: "699 ₽",
-    price: "Бесплатно при заказе",
+    oldPrice: null,
+    price: "199 ₽",
     highlight: false,
+  },
+  {
+    icon: "🎁",
+    title: "Бесплатный расклад",
+    desc: "Один вопрос — одна карта. Краткий ответ на то, что волнует прямо сейчас. Без регистрации, анонимно.",
+    oldPrice: null,
+    price: "Бесплатно",
+    highlight: false,
+    free: true,
   },
 ];
 
@@ -232,6 +243,10 @@ const Index = () => {
   const [showCert, setShowCert] = useState(false);
   const [activeNav, setActiveNav] = useState("hero");
   const [visible, setVisible] = useState<Record<string, boolean>>({});
+  const [form, setForm] = useState({ name: "", contact: "", message: "Бесплатный расклад" });
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   useEffect(() => {
@@ -258,6 +273,25 @@ const Index = () => {
     sectionRefs.current[id] = el;
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch(SEND_EMAIL_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error("Ошибка отправки");
+      setSent(true);
+    } catch {
+      setError("Не удалось отправить. Напишите напрямую в Telegram.");
+    } finally {
+      setSending(false);
+    }
+  };
+
   return (
     <div className="min-h-screen text-white font-montserrat overflow-x-hidden" style={{ background: "#0d0515" }}>
       <StarField />
@@ -271,7 +305,6 @@ const Index = () => {
         <div className="hidden md:flex items-center gap-8">
           {[
             { id: "hero", label: "Главная" },
-            { id: "about", label: "О мастере" },
             { id: "services", label: "Услуги" },
             { id: "reviews", label: "Отзывы" },
             { id: "contacts", label: "Контакты" },
@@ -373,80 +406,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ABOUT */}
-      <section
-        id="about"
-        ref={setRef("about")}
-        className="relative py-28 px-6"
-        style={{ background: "linear-gradient(to bottom, transparent, rgba(22,11,36,0.8), transparent)" }}
-      >
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div
-              className={`transition-all duration-1000 ${visible.about ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-12"}`}
-            >
-              <div className="relative">
-                <div
-                  className="absolute -inset-4 rounded-sm opacity-40"
-                  style={{ background: "linear-gradient(135deg, rgba(102,51,153,0.4), transparent)" }}
-                />
-                <img
-                  src={MASTER_IMAGE}
-                  alt="Мастер таро"
-                  className="relative w-full aspect-[3/4] object-cover rounded-sm"
-                  style={{ boxShadow: "0 0 60px rgba(102,51,153,0.35)" }}
-                />
-                <div
-                  className="absolute bottom-6 right-6 bg-mystic-deep/90 border border-gold-DEFAULT/40 px-5 py-3 cursor-pointer hover:bg-gold-DEFAULT/10 transition-all"
-                  onClick={() => setShowCert(true)}
-                >
-                  <p className="font-montserrat text-xs text-gold-DEFAULT/70 tracking-widest uppercase mb-1">Сертификат</p>
-                  <p className="font-cormorant text-gold-light text-lg">Посмотреть →</p>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className={`transition-all duration-1000 delay-200 ${visible.about ? "opacity-100 translate-x-0" : "opacity-0 translate-x-12"}`}
-            >
-              <p className="font-montserrat text-gold-DEFAULT/70 text-xs tracking-[0.4em] uppercase mb-4">О мастере</p>
-              <h2 className="font-cormorant text-5xl font-light text-white mb-2">Елена</h2>
-              <p className="font-cormorant italic text-gold-DEFAULT text-2xl mb-6">Светлова</p>
-
-              <div className="space-y-5 text-white/65 leading-relaxed font-cormorant text-xl">
-                <p>
-                  Более <span className="text-gold-light font-medium">12 лет</span> я практикую таро и астрологию,
-                  помогая людям найти ясность в самые сложные моменты жизни.
-                </p>
-                <p>
-                  Мой путь начался с личного поиска ответов. Сегодня я сертифицированный мастер таро,
-                  нумеролог и астролог с международным дипломом.
-                </p>
-                <p>
-                  За годы практики я провела более <span className="text-gold-light font-medium">2 000 консультаций</span> для
-                  клиентов из 15 стран мира.
-                </p>
-              </div>
-
-              <GoldDivider />
-
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { num: "12+", label: "лет практики" },
-                  { num: "2000+", label: "консультаций" },
-                  { num: "15", label: "стран мира" },
-                ].map((stat) => (
-                  <div key={stat.label} className="text-center">
-                    <p className="font-cormorant text-3xl text-gold-DEFAULT font-light">{stat.num}</p>
-                    <p className="font-montserrat text-white/40 text-xs mt-1">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* SERVICES */}
       <section id="services" ref={setRef("services")} className="py-28 px-6">
         <div className="max-w-6xl mx-auto">
@@ -498,6 +457,22 @@ const Index = () => {
                     {service.price}
                   </span>
                 </div>
+                {"free" in service && service.free ? (
+                  <button
+                    onClick={() => { setForm(f => ({ ...f, message: "Бесплатный расклад" })); scrollTo("contacts"); }}
+                    className="mt-4 w-full py-2 font-montserrat text-xs tracking-widest uppercase font-medium transition-all duration-300"
+                    style={{ background: "linear-gradient(135deg, #FFE066, #FFCC33)", color: "#0d0515" }}
+                  >
+                    Получить бесплатно →
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { setForm(f => ({ ...f, message: `Хочу заказать: ${service.title}` })); scrollTo("contacts"); }}
+                    className="mt-4 w-full py-2 font-montserrat text-xs tracking-widest uppercase border border-gold-DEFAULT/30 text-gold-light hover:bg-gold-DEFAULT/10 transition-all duration-300"
+                  >
+                    Заказать
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -566,32 +541,51 @@ const Index = () => {
               Напишите — и мы найдём время для вашей консультации
             </p>
 
-            <div className="space-y-4 mb-12">
-              <input
-                type="text"
-                placeholder="Ваше имя"
-                className="w-full bg-mystic-mid/60 border border-gold-DEFAULT/30 px-6 py-4 font-montserrat text-sm text-white placeholder-white/30 focus:outline-none focus:border-gold-DEFAULT/60 transition-colors"
-              />
-              <input
-                type="tel"
-                placeholder="Телефон или Telegram"
-                className="w-full bg-mystic-mid/60 border border-gold-DEFAULT/30 px-6 py-4 font-montserrat text-sm text-white placeholder-white/30 focus:outline-none focus:border-gold-DEFAULT/60 transition-colors"
-              />
-              <textarea
-                rows={4}
-                placeholder="Ваш вопрос или пожелание..."
-                className="w-full bg-mystic-mid/60 border border-gold-DEFAULT/30 px-6 py-4 font-montserrat text-sm text-white placeholder-white/30 focus:outline-none focus:border-gold-DEFAULT/60 transition-colors resize-none"
-              />
-              <button
-                className="w-full py-5 font-montserrat text-xs tracking-[0.3em] uppercase text-mystic-dark font-medium transition-all duration-300 hover:scale-[1.02]"
-                style={{
-                  background: "linear-gradient(135deg, #FFE066, #FFCC33)",
-                  boxShadow: "0 0 40px rgba(255,204,51,0.3)",
-                }}
-              >
-                Отправить сообщение
-              </button>
-            </div>
+            {sent ? (
+              <div className="border border-gold-DEFAULT/40 p-10 mb-12 text-center" style={{ background: "rgba(102,51,153,0.15)" }}>
+                <div className="text-4xl mb-4">✦</div>
+                <p className="font-cormorant text-2xl text-gold-DEFAULT mb-2">Сообщение отправлено!</p>
+                <p className="font-montserrat text-white/50 text-sm">Я свяжусь с вами в ближайшее время.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4 mb-12">
+                <input
+                  type="text"
+                  placeholder="Ваше имя"
+                  required
+                  value={form.name}
+                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  className="w-full bg-mystic-mid/60 border border-gold-DEFAULT/30 px-6 py-4 font-montserrat text-sm text-white placeholder-white/30 focus:outline-none focus:border-gold-DEFAULT/60 transition-colors"
+                />
+                <input
+                  type="text"
+                  placeholder="Телефон или Telegram"
+                  required
+                  value={form.contact}
+                  onChange={e => setForm(f => ({ ...f, contact: e.target.value }))}
+                  className="w-full bg-mystic-mid/60 border border-gold-DEFAULT/30 px-6 py-4 font-montserrat text-sm text-white placeholder-white/30 focus:outline-none focus:border-gold-DEFAULT/60 transition-colors"
+                />
+                <textarea
+                  rows={4}
+                  placeholder="Ваш вопрос или пожелание..."
+                  value={form.message}
+                  onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+                  className="w-full bg-mystic-mid/60 border border-gold-DEFAULT/30 px-6 py-4 font-montserrat text-sm text-white placeholder-white/30 focus:outline-none focus:border-gold-DEFAULT/60 transition-colors resize-none"
+                />
+                {error && <p className="font-montserrat text-sm text-red-400">{error}</p>}
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="w-full py-5 font-montserrat text-xs tracking-[0.3em] uppercase text-mystic-dark font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-60"
+                  style={{
+                    background: "linear-gradient(135deg, #FFE066, #FFCC33)",
+                    boxShadow: "0 0 40px rgba(255,204,51,0.3)",
+                  }}
+                >
+                  {sending ? "Отправляю..." : "Отправить сообщение"}
+                </button>
+              </form>
+            )}
 
             <GoldDivider />
 
